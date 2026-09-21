@@ -1,5 +1,6 @@
 // Core API Client with timeout, retries, auth tokens in-memory, and normalized errors
 import { API_BASE_URL } from '../../config/constants';
+import { sameOriginApiUrl } from '../security/frontendSecurity';
 import { generateRequestId } from '../utils';
 import type { ApiResponse } from '../../types';
 
@@ -75,7 +76,7 @@ class ApiClient {
       throw new ApiError('API integration is disabled in local frontend mode.', 0, 'API_DISABLED');
     }
     const { timeout = 12000, retries = 1, ...fetchOptions } = options;
-    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+    const url = sameOriginApiUrl(endpoint, this.baseUrl);
     const requestId = generateRequestId();
 
     const headers = new Headers(fetchOptions.headers || {});

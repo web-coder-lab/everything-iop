@@ -144,7 +144,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({ user: propUser, userna
               </span>
               <span className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
                 <Link2 className="w-3.5 h-3.5" />
-                <a href="https://everything.example" target="_blank" rel="noreferrer" className="hover:underline">
+                <a href="https://everything.example" target="_blank" rel="noopener noreferrer" className="hover:underline">
                   everything.example
                 </a>
               </span>

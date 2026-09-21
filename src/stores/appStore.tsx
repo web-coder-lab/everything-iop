@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../lib/api/client';
 import { API_ENABLED } from '../config/constants';
+import { safeInternalPath, clearSensitiveClientState } from '../lib/security/frontendSecurity';
 import { AuthApi } from '../lib/api/authApi';
 import { PostApi } from '../lib/api/postApi';
 import { CommunityApi } from '../lib/api/communityApi';
@@ -109,7 +110,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Routing (starts at /home if user signed in, or /welcome if guest)
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
-    if (typeof window !== 'undefined' && window.location.pathname && window.location.pathname !== '/') return window.location.pathname;
+    if (typeof window !== 'undefined' && window.location.pathname && window.location.pathname !== '/') {
+      return safeInternalPath(window.location.pathname, '/welcome');
+    }
     return '/welcome';
   });
   const [routeParams, setRouteParams] = useState<Record<string, string>>(() => {
@@ -284,12 +287,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Navigation: keep the in-app router and browser URL in sync.
   const navigate = useCallback((route: string, params: Record<string, string> = {}) => {
-    setCurrentRoute(route);
-    setRouteParams(params);
+    const safeRoute = safeInternalPath(route, '/home');
+    const safeParams: Record<string, string> = {};
+    Object.entries(params).forEach(([key, value]) => {
+      if (!key || value === undefined) return;
+      safeParams[key.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 40)] = String(value).slice(0, 180);
+    });
+    setCurrentRoute(safeRoute);
+    setRouteParams(safeParams);
     if (typeof window !== 'undefined') {
-      const query = Object.entries(params).filter(([, value]) => value !== undefined && value !== '').map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
-      const nextUrl = query ? `${route}?${query}` : route;
-      if (window.location.pathname + window.location.search !== nextUrl) window.history.pushState({ route, params }, '', nextUrl);
+      const query = Object.entries(safeParams).filter(([, value]) => value !== undefined && value !== '').map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+      const nextUrl = query ? `${safeRoute}?${query}` : safeRoute;
+      if (window.location.pathname + window.location.search !== nextUrl) window.history.pushState({ route: safeRoute, params: safeParams }, '', nextUrl);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, []);
@@ -299,7 +308,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const onPopState = () => {
       const params: Record<string, string> = {};
       new URLSearchParams(window.location.search).forEach((value, key) => { params[key] = value; });
-      setCurrentRoute(window.location.pathname || '/home');
+      setCurrentRoute(safeInternalPath(window.location.pathname || '/home'));
       setRouteParams(params);
       window.scrollTo({ top: 0, behavior: 'auto' });
     };
@@ -326,6 +335,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const res = await AuthApi.login({ usernameOrEmail: u, password: p });
       if (!res.data?.user) throw new Error('Authentication server returned no user.');
+      if (res.data.token) apiClient.setAccessToken(res.data.token);
       setCurrentUser(res.data.user);
       socketClient.reconnect(apiClient.getAccessToken() || undefined);
       addToast(`Welcome back, ${res.data.user.fullName}!`, 'success');
@@ -339,6 +349,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const res = await AuthApi.register({ fullName, username, emailOrPhone, password, bio, avatarUrl });
       if (!res.data?.user) throw new Error('Registration server returned no user.');
+      if (res.data.token) apiClient.setAccessToken(res.data.token);
       let user = res.data.user;
       if (avatarFile) {
         if (avatarFile.size > 10 * 1024 * 1024) throw new Error('Profile image must be 10 MB or smaller.');
@@ -360,8 +371,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err: any) { addToast(err.message || 'Registration failed.', 'error'); return false; }
   };
 
-  const logout = async () => { try { await AuthApi.logout(); setCurrentUser(null); navigate('/welcome'); addToast('Logged out securely.', 'info'); } catch (err:any) { addToast(err.message || 'Logout could not be completed by the server.', 'error'); } };
-  const logoutAll = async () => { try { await AuthApi.logoutAll(); setCurrentUser(null); navigate('/welcome'); addToast('All active sessions revoked.', 'info'); } catch (err:any) { addToast(err.message || 'Session revocation could not be completed.', 'error'); } };
+  const logout = async () => { try { await AuthApi.logout(); } catch (err:any) { addToast(err.message || 'Logout could not be completed by the server.', 'error'); } finally { apiClient.clearAccessToken(); clearSensitiveClientState(); setCurrentUser(null); navigate('/welcome'); addToast('Logged out securely.', 'info'); } };
+  const logoutAll = async () => { try { await AuthApi.logoutAll(); } catch (err:any) { addToast(err.message || 'Session revocation could not be completed.', 'error'); } finally { apiClient.clearAccessToken(); clearSensitiveClientState(); setCurrentUser(null); navigate('/welcome'); addToast('All active sessions revoked.', 'info'); } };
   const updateCurrentUser = (updates: Partial<User>) => setCurrentUser((u) => u ? { ...u, ...updates } : u);
 
   // Post Actions: every mutation goes to the server.
