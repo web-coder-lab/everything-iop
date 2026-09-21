@@ -10,6 +10,7 @@ import { env } from './config/env.js';
 import { requestId } from './core/request.js';
 import { optionalAuth } from './core/auth.js';
 import { apiRouter, apiErrorHandler } from './routes/api.js';
+import { privateApi } from './integrations/private-api/client.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');

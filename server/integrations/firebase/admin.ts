@@ -21,8 +21,8 @@ async function ensure() {
       storageBucket: env.firebaseStorageBucket || undefined,
     });
   }
-  firestoreInstance = admin.getFirestore();
-  storageInstance = admin.getStorage();
+  firestoreInstance = admin.firestore();
+  storageInstance = admin.storage();
   initialized = true;
 }
 

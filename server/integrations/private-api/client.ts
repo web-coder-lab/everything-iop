@@ -55,7 +55,7 @@ export class PrivateApiClient {
 
   get<T>(path: string, init?: RequestInit) { return this.request<T>(path, init); }
   post<T>(path: string, body: unknown, headers?: HeadersInit) {
-    return this.request<T>(path, { method: 'POST', headers, body: Buffer.isBuffer(body) ? body : JSON.stringify(body) });
+    return this.request<T>(path, { method: 'POST', headers, body: Buffer.isBuffer(body) ? new Uint8Array(body) : JSON.stringify(body) });
   }
   patch<T>(path: string, body: unknown, headers?: HeadersInit) {
     return this.request<T>(path, { method: 'PATCH', headers, body: JSON.stringify(body) });
@@ -77,7 +77,7 @@ export class PrivateApiClient {
       let decodedPath = path;
       try { decodedPath = decodeURIComponent(path); } catch { throw new AppError(400, 'INVALID_PATH_ENCODING', 'Invalid path encoding.'); }
       if (!decodedPath.startsWith('/') || decodedPath.includes('..') || decodedPath.includes('\\') || /[\u0000-\u001f\u007f]/.test(decodedPath)) throw new AppError(400, 'INVALID_PRIVATE_API_PATH', 'Invalid private API path.');
-      response = await fetch(`${env.privateApiBaseUrl}${decodedPath}`, { method: 'POST', headers, body, signal: controller.signal });
+      response = await fetch(`${env.privateApiBaseUrl}${decodedPath}`, { method: 'POST', headers, body: new Uint8Array(body), signal: controller.signal });
     } catch (error) {
       if ((error as any)?.name === 'AbortError') throw new AppError(504, 'PRIVATE_API_TIMEOUT', 'Private API media upload timed out.');
       throw new AppError(502, 'PRIVATE_API_UNAVAILABLE', 'Private API is unavailable.');
