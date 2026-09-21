@@ -1,0 +1,14 @@
+{
+  "release": "Everything IOP Final",
+  "frontend": "included",
+  "nodeBackend": "included",
+  "privateApi": "NOT_CONFIGURED",
+  "paymentGateway": "NOT_CONFIGURED",
+  "firebase": "OPTIONAL_NOT_CONFIGURED",
+  "database": "external-private-api",
+  "streamRecordingMaxRetentionHours": 6,
+  "platformAdminPanel": false,
+  "singleDeployment": true,
+  "audit": "STATIC_SYNTAX_SECURITY_ACTIONS_VERIFIED",
+  "runtimeBuild": "BLOCKED_DEPENDENCIES_NOT_INSTALLED"
+}

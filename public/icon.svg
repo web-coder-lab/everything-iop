@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+  </defs>
+  <!-- Rounded Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  
+  <!-- Subtle decorative ring -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#10b981" stroke-width="6" stroke-opacity="0.25" stroke-dasharray="8 8" />
+
+  <!-- Stylized Community Emblem -->
+  <!-- Crescent shape -->
+  <path d="M 285 140 A 130 130 0 1 0 370 340 A 105 105 0 1 1 285 140 Z" fill="#ffffff" fill-opacity="0.95" />
+  
+  <!-- Star with gold sheen -->
+  <polygon points="350,175 358,198 382,198 363,212 370,235 350,221 330,235 337,212 318,198 342,198" fill="url(#goldGrad)" />
+
+  <!-- Community Connection Dots and Bridge -->
+  <circle cx="210" cy="300" r="16" fill="url(#goldGrad)" />
+  <circle cx="270" cy="315" r="14" fill="#ffffff" />
+  <circle cx="170" cy="330" r="12" fill="#34d399" />
+  <path d="M 170 330 Q 210 320 270 315" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" />
+</svg>
