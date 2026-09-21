@@ -18,6 +18,7 @@ import { SavedPostsView } from './components/feed/SavedPostsView';
 import { SettingsView } from './components/settings/SettingsView';
 import { SecurityCenterView } from './components/settings/SecurityCenterView';
 import { HelpView } from './components/help/HelpView';
+import { LegalView } from './components/help/LegalView';
 import { LoginView } from './components/auth/LoginView';
 import { RegisterView } from './components/auth/RegisterView';
 import { WelcomeView } from './components/auth/WelcomeView';
@@ -26,7 +27,7 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 import EverythingHome from './components/everything/EverythingHome';
 import EverythingDetailHub from './components/everything/EverythingDetailHub';
 
-const EVERYTHING_ROUTES = new Set(['/home','/everything','/reels','/videos','/live','/store','/events','/wallet','/coins','/subscriptions','/seller','/creator','/business','/developer','/community-control','/details']);
+const EVERYTHING_ROUTES = new Set(['/everything','/reels','/videos','/live','/store','/events','/wallet','/coins','/subscriptions','/seller','/creator','/business','/developer','/community-control','/details']);
 const isEverythingRoute = (route: string) => EVERYTHING_ROUTES.has(route) || route.startsWith('/everything/') || ['/reel/','/video/','/live/','/user/','/community/','/product/','/event/'].some((prefix) => route.startsWith(prefix));
 
 const RouterContent: React.FC = () => {
@@ -47,7 +48,7 @@ const RouterContent: React.FC = () => {
   if (currentRoute === '/forgot-password') return <ForgotPasswordView />;
   if (currentRoute === '/reset-password') return <ResetPasswordView />;
 
-  const protectedRoute = currentRoute.startsWith('/home') || currentRoute.startsWith('/everything') || ['/reels','/videos','/live','/store','/events','/wallet','/coins','/subscriptions','/seller','/creator','/business','/developer','/community-control','/details','/messages','/notifications','/profile','/saved','/settings','/create','/followers','/following','/reports'].includes(currentRoute) || currentRoute.startsWith('/communities') || currentRoute.startsWith('/post/') || currentRoute.startsWith('/reel/') || currentRoute.startsWith('/video/') || currentRoute.startsWith('/live/') || currentRoute.startsWith('/product/') || currentRoute.startsWith('/event/');
+  const protectedRoute = currentRoute.startsWith('/home') || currentRoute.startsWith('/everything') || currentRoute.startsWith('/settings') || currentRoute.startsWith('/messages') || currentRoute.startsWith('/profile') || currentRoute.startsWith('/create') || ['/reels','/videos','/live','/store','/events','/wallet','/coins','/subscriptions','/seller','/creator','/business','/developer','/community-control','/details','/notifications','/saved','/followers','/following','/reports','/stories/create'].includes(currentRoute) || currentRoute.startsWith('/communities') || currentRoute.startsWith('/post/') || currentRoute.startsWith('/reel/') || currentRoute.startsWith('/video/') || currentRoute.startsWith('/live/') || currentRoute.startsWith('/product/') || currentRoute.startsWith('/event/');
   if (protectedRoute && !currentUser) return <LoginView />;
 
   if (currentRoute.startsWith('/post/')) {
@@ -116,6 +117,12 @@ const RouterContent: React.FC = () => {
   if (currentRoute === '/help') {
     return <HelpView />;
   }
+  if (currentRoute === '/legal' || currentRoute === '/privacy' || currentRoute === '/terms' || currentRoute === '/privacy-terms') {
+    return <LegalView />;
+  }
+  if (currentRoute === '/' || currentRoute === '/home') {
+    return <FeedView />;
+  }
   if (currentRoute === '/explore') return <ExploreView />;
   if (currentRoute === '/stories/create') return <CreateStoryView />;
   if (currentRoute === '/support') return <SupportView />;
@@ -135,7 +142,7 @@ const RouterContent: React.FC = () => {
   if (currentRoute === '/404') return <SystemStateView kind="404" />;
 
   // Everything is the unified product surface. Unknown URLs must not silently fall back to home.
-  const knownStandalone = new Set(['/','/home','/everything','/reels','/videos','/live','/store','/events','/wallet','/coins','/subscriptions','/seller','/creator','/business','/developer','/community-control','/details']);
+  const knownStandalone = new Set(['/','/home','/everything','/reels','/videos','/live','/store','/events','/wallet','/coins','/subscriptions','/seller','/creator','/business','/developer','/community-control','/details','/help','/legal','/privacy','/terms','/privacy-terms']);
   const knownDynamic = currentRoute.startsWith('/everything/') || currentRoute.startsWith('/post/') || currentRoute.startsWith('/reel/') || currentRoute.startsWith('/video/') || currentRoute.startsWith('/live/') || currentRoute.startsWith('/user/') || currentRoute.startsWith('/community/') || currentRoute.startsWith('/product/') || currentRoute.startsWith('/event/') || currentRoute.startsWith('/communities/') || currentRoute.startsWith('/messages/') || currentRoute.startsWith('/users/');
   if (!knownStandalone.has(currentRoute) && !knownDynamic) return <SystemStateView kind="404" />;
   return <EverythingHome />;

@@ -150,6 +150,20 @@ export const SettingsView: React.FC = () => {
           </div>
           <ChevronRight className="w-4 h-4 text-stone-400" />
         </div>
+
+        <div
+          onClick={() => navigate('/legal')}
+          className="flex items-center justify-between p-3 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800/60 cursor-pointer transition"
+        >
+          <div className="flex items-center gap-3">
+            <Info className="w-5 h-5 text-emerald-700" />
+            <div>
+              <p className="text-xs font-bold text-stone-900 dark:text-white">Privacy & Terms</p>
+              <p className="text-[11px] text-stone-500">Payments on Firebase, content stays private</p>
+            </div>
+          </div>
+          <ChevronRight className="w-4 h-4 text-stone-400" />
+        </div>
       </div>
 
       {/* Log out options */}

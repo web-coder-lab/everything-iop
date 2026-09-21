@@ -38,7 +38,7 @@ export const TopBar: React.FC = () => {
             className="flex items-center gap-2.5 focus:outline-none group text-left"
           >
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-800 to-emerald-950 flex items-center justify-center text-amber-300 font-bold shadow-sm shadow-emerald-950/20 group-hover:scale-105 transition-transform">
-              <span className="text-sm font-black tracking-tight">PF</span>
+              <span className="text-[10px] font-black tracking-tight">EIOP</span>
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-extrabold tracking-tight text-emerald-950 dark:text-emerald-100 font-['Outfit']">

@@ -13,9 +13,8 @@ import {
   HelpCircle,
   ChevronLeft,
   ChevronRight,
-  PenSquare,
   Compass,
-  Server,
+  ScrollText,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -25,7 +24,6 @@ export const Sidebar: React.FC = () => {
     currentUser,
     unreadMessagesCount,
     unreadNotificationsCount,
-    setCreatePostModalOpen,
   } = useAppStore();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -55,7 +53,7 @@ export const Sidebar: React.FC = () => {
     { label: 'Settings', path: '/settings', icon: Settings },
     { label: 'Security', path: '/settings/security', icon: Shield },
     { label: 'Help', path: '/help', icon: HelpCircle },
-    { label: 'Server Status', path: '/server-status', icon: Server },
+    { label: 'Privacy & Terms', path: '/legal', icon: ScrollText },
   ];
 
 
@@ -71,20 +69,6 @@ export const Sidebar: React.FC = () => {
         isCollapsed ? 'w-20' : 'w-64'
       }`}
     >
-      {/* Create Post Action Button */}
-      <div className="mb-4">
-        <button
-          onClick={() => setCreatePostModalOpen(true)}
-          className={`w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-900 to-emerald-800 hover:from-emerald-800 hover:to-emerald-700 text-white font-semibold text-xs shadow-md shadow-emerald-950/20 active:scale-95 transition-all ${
-            isCollapsed ? 'p-3' : ''
-          }`}
-          title="Create new post"
-        >
-          <PenSquare className="w-4 h-4 text-amber-300 shrink-0" />
-          {!isCollapsed && <span>Create Post</span>}
-        </button>
-      </div>
-
       {/* Primary Navigation */}
       <nav className="flex-1 space-y-1">
         <div className="text-[10px] uppercase font-bold tracking-wider text-stone-400 px-3 mb-1">
@@ -163,7 +147,7 @@ export const Sidebar: React.FC = () => {
         {!isCollapsed && (
           <div className="flex items-center gap-2 text-[11px] text-stone-500 px-2 truncate">
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-            <span>Render Prototype Live</span>
+            <span>EIOP</span>
           </div>
         )}
         <button
